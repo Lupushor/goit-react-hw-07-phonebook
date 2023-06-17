@@ -1,14 +1,19 @@
-// import PropTypes from 'prop-types';
+import { useEffect } from 'react';
 import { ContactItem } from './ContactList.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteContact } from 'redux/operations';
-import { getFilterContacts, selectContacts } from 'redux/selectors';
+import { deleteContact, fetchContacts } from 'redux/operations';
+import { selectError, selectFilteredContacts, selectIsLoading } from 'redux/selectors';
 
 export const ContactList = () => {
-  const contacts = useSelector(selectContacts);
-  // const filterContacts = useSelector(getFilterContacts);
+  const filterContacts = useSelector(selectFilteredContacts);
+  const isLoading = useSelector(selectIsLoading)
+  const error = useSelector(selectError)
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
   const onDelete = id => {
     dispatch(deleteContact(id));
@@ -16,7 +21,7 @@ export const ContactList = () => {
 
   return (
     <ul>
-      {contacts.map(({ id, name, number }) => (
+      {filterContacts.map(({ id, name, number }) => (
         <ContactItem key={id}>
           {name}: {number}
           <button type="button" onClick={() => onDelete(id)}>
@@ -24,14 +29,8 @@ export const ContactList = () => {
           </button>
         </ContactItem>
       ))}
-      {/* {filterContacts.map(({ id, name, number }) => (
-        <ContactItem key={id}>
-          {name}: {number}
-          <button type="button" onClick={() => onDelete(id)}>
-            Delete contact
-          </button>
-        </ContactItem>
-      ))} */}
+      {isLoading && <h1>Loading...</h1>}
+      {error && <h1>{error}</h1>}
     </ul>
   );
 };
