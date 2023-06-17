@@ -11,3 +11,7 @@ export const getFilterContacts = ({ contacts: { items }, filter }) => {
       number.includes(filter)
   );
 };
+
+export const selectContacts = state => state.contacts.items;
+export const selectIsLoading = state => state.contacts.isLoading;
+export const selectError = state => state.error;
